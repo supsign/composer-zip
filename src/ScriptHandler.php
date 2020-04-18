@@ -32,7 +32,7 @@ class ScriptHandler
                 $zip->addFile($source, basename($source));
             }
         }
-        $event->getIO()->write(sprintf('<info>Created "%s" in "%s"<info>', $source, $destination));
+        $event->getIO()->write(sprintf('<info>Created/Updated "%s" in "%s"<info>', $source, $destination));
         return $zip->close();
     }
 
