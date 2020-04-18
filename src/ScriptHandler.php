@@ -7,18 +7,18 @@ use Composer\Script\Event;
 
 class ScriptHandler
 {
-    public static function createSymlinks(Event $event, Filesystem $filesystem = null)
+    public static function createZip(Event $event, Filesystem $filesystem = null)
     {
         /** @var PackageInterface $package */
         $package = $event->getComposer()->getPackage();
         /** @var Config $config */
         $config = $event->getComposer()->getConfig();
-        $symlinks = (array) $package->getExtra()['symlinks'] ? (array) $package->getExtra()['symlinks'] : [];
+        $archives = (array) $package->getExtra()['archives'] ? (array) $package->getExtra()['archives'] : [];
         $vendorPath = $config->get('vendor-dir');
         $rootPath = dirname($vendorPath);
         $filesystem = $filesystem ?: new Filesystem;
 
-        foreach ($symlinks as $sourceRelativePath => $targetRelativePath) {
+        foreach ($archives as $sourceRelativePath => $targetRelativePath) {
             // Remove trailing slash that can cause the target to be deleted by ln.
             $targetRelativePath = rtrim($targetRelativePath, '/');
 
