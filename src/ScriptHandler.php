@@ -38,15 +38,31 @@ class ScriptHandler
 
         foreach ($archives as $OutputZipName => $RelativeFolderToBeZipped) {
 
-            var_dump($OutputZipName);
-            var_dump($RelativeFolderToBeZipped);
-
-            $rootPath = realpath($RelativeFolderToBeZipped);
-            var_dump($rootPath);
+            $source = realpath($RelativeFolderToBeZipped);
 
             $zip = new \ZipArchive();
             $zip->open($outputFolder['dir'].'/'.$OutputZipName.'.zip', \ZipArchive::CREATE | \ZipArchive::OVERWRITE);
-            $zip->addFile("composer.json");
+
+            if (is_dir($source)) {
+                $iterator = new \RecursiveDirectoryIterator($source);
+                // skip dot files while iterating 
+                $iterator->setFlags(\RecursiveDirectoryIterator::SKIP_DOTS);
+                $files = new \RecursiveIteratorIterator($iterator, \RecursiveIteratorIterator::SELF_FIRST);
+                var_dump($files);
+                foreach ($files as $file) {
+                    $file = realpath($file);
+                    if (is_dir($file)) {
+                        $zip->addEmptyDir(str_replace($source . '/', '', $file . '/'));
+                    } else if (is_file($file)) {
+                        $zip->addFromString(str_replace($source . '/', '', $file), file_get_contents($file));
+                    }
+                }
+            } else if (is_file($source)) {
+                $zip->addFromString(basename($source), file_get_contents($source));
+            }
+
+
+
             $zip->close();
 
 
