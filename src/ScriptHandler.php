@@ -11,7 +11,7 @@ use Symfony\Component\Filesystem\Filesystem;
 class ScriptHandler
 {
 
-    public static function zip_files($source, $destination)
+    public static function zip_files(Event $event, $source, $destination)
     {
         $zip = new \ZipArchive();
         if ($zip->open($destination, \ZIPARCHIVE::CREATE) === true) {
@@ -32,6 +32,7 @@ class ScriptHandler
                 $zip->addFile($source, basename($source));
             }
         }
+        $event->getIO()->write(sprintf('<info>Created "%s" in "%s"<info>', $source, $destination));
         return $zip->close();
     }
 
@@ -60,21 +61,19 @@ class ScriptHandler
         }
 
 
-        //   var_dump($archives);
 
         foreach ($archives as $OutputZipName => $RelativeFolderToBeZipped) {
 
 
-
-
-
-
-
             $source = realpath($RelativeFolderToBeZipped);
             $fileName = $OutputZipName . '.zip';
-            $destination = realpath($outputFolder['dir']) . $fileName . '.zip';
+            var_dump($fileName);
+            $destination = realpath($outputFolder['dir']) . DIRECTORY_SEPARATOR . $fileName;
 
-            zip_files($source, $destination);
+            var_dump($destination);
+            var_dump($source);
+
+            self::zip_files($event, $source, $destination);
         }
     }
 }
