@@ -1,0 +1,12 @@
+{
+    "name": "supsign/composer-zip",
+    "description": "Composer script handling for zipping Files",
+    "keywords": ["composer", "script", "symlink"],
+    "license": "MIT",
+    "authors": [
+        {"name": "Fabrizio Cocco", "email": "fabrizio.cocco@supsign.ch"}
+    ],
+    "autoload": {
+        "psr-4": {"Supsign\\ComposerZip\\": "src/"}
+    }
+}
