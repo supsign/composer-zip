@@ -45,8 +45,8 @@ class ScriptHandler
             var_dump($rootPath);
 
             $zip = new \ZipArchive();
-            $zip->open('file.zip', \ZipArchive::CREATE | \ZipArchive::OVERWRITE);
-            $zip->addFile("test.php");
+            $zip->open($outputFolder['dir'].'/'.$OutputZipName.'.zip', \ZipArchive::CREATE | \ZipArchive::OVERWRITE);
+            $zip->addFile("composer.json");
             $zip->close();
 
 
