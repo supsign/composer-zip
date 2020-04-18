@@ -6,6 +6,7 @@ use Composer\Package\PackageInterface;
 use Composer\Script\Event;
 use Symfony\Component\Filesystem\Filesystem;
 
+
 class ScriptHandler
 {
     public static function createZip(Event $event, Filesystem $filesystem = null)
@@ -40,6 +41,13 @@ class ScriptHandler
             var_dump($OutputZipName);
             var_dump($RelativeFolderToBeZipped);
 
+            $rootPath = realpath($RelativeFolderToBeZipped);
+            var_dump($rootPath);
+
+            $zip = new \ZipArchive();
+            $zip->open('file.zip', \ZipArchive::CREATE | \ZipArchive::OVERWRITE);
+            $zip->addFile("test.php");
+            $zip->close();
 
 
             // Remove trailing slash that can cause the target to be deleted by ln.
