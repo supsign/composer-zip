@@ -5,7 +5,7 @@ use Composer\Config;
 use Composer\Package\PackageInterface;
 use Composer\Script\Event;
 
-class ScriptHandler
+class ScriptHandlerZip
 {
     public static function createSymlinks(Event $event, Filesystem $filesystem = null)
     {
