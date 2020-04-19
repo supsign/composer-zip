@@ -64,15 +64,9 @@ class ScriptHandler
 
         foreach ($archives as $OutputZipName => $RelativeFolderToBeZipped) {
 
-
             $source = realpath($RelativeFolderToBeZipped);
             $fileName = $OutputZipName . '.zip';
-            var_dump($fileName);
             $destination = realpath($outputFolder['dir']) . DIRECTORY_SEPARATOR . $fileName;
-
-            var_dump($destination);
-            var_dump($source);
-
             self::zip_files($event, $source, $destination);
         }
     }
