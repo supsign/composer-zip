@@ -6,7 +6,15 @@ use Composer\Config;
 use Composer\Package\PackageInterface;
 use Composer\Script\Event;
 use Symfony\Component\Filesystem\Filesystem;
-use Alchemy\Zippy as Zippy;
+use Alchemy\Zippy\Zippy;
+
+
+if (file_exists(dirname(__FILE__) . '/vendor/autoload.php')) {
+    require_once dirname(__FILE__) . '/vendor/autoload.php';
+}
+
+
+
 
 
 class ScriptHandler
@@ -66,15 +74,18 @@ class ScriptHandler
         foreach ($archives as $OutputZipName => $RelativeFolderToBeZipped) {
 
          //   $source = realpath($RelativeFolderToBeZipped);
-        //  $fileName = $OutputZipName . '.zip';
+         $fileName = $OutputZipName . '.zip';
          //   $destination = realpath($outputFolder['dir']) . DIRECTORY_SEPARATOR . $fileName;
          //   self::zip_files($event, $source, $destination);
 
+            $zippy = Zippy::load();
 
-         //   $zippy = Zippy::load();
+            $archive = $zippy->create($outputFolder['dir'].'/'.$fileName, array(
+                'folder' => 'Develop/HABEBI/Events'
+            ), true);
 
 
-         print_r(get_declared_classes());
+        
 
 
         }
