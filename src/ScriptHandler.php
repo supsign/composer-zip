@@ -20,6 +20,50 @@ if (file_exists(dirname(__FILE__) . '/vendor/autoload.php')) {
 class ScriptHandler
 {
 
+
+    public static function custom_copy($src, $dst) {  
+  
+        // open the source directory 
+        $dir = opendir($src);  
+      
+        // Make the destination directory if not exist 
+        @mkdir($dst);  
+      
+        // Loop through the files in source directory 
+        while( $file = readdir($dir) ) {  
+      
+            if (( $file != '.' ) && ( $file != '..' )) {  
+                if ( is_dir($src . '/' . $file) )  
+                {  
+      
+                    // Recursively calling custom copy function 
+                    // for sub directory  
+                    self::custom_copy($src . '/' . $file, $dst . '/' . $file);  
+      
+                }  
+                else {  
+                    copy($src . '/' . $file, $dst . '/' . $file);  
+                }  
+            }  
+        }  
+      
+        closedir($dir); 
+    } 
+
+
+
+public static function copy_files(Event $event){
+
+    $source = 'Develop/HABEBI/Events';
+    $destination = 'Buildtmp/HABEBI/Events';
+    
+    self::custom_copy($source,$destination);
+
+}
+
+
+
+
     public static function zip_files(Event $event, $source, $destination)
     {
         $zip = new \ZipArchive();
@@ -55,6 +99,7 @@ class ScriptHandler
         $outputFolder = (array) $package->getExtra()['outputFolder'] ? (array) $package->getExtra()['outputFolder'] : [];
         $vendorPath = $config->get('vendor-dir');
         $rootPath = dirname($vendorPath);
+        
         //    $filesystem = $filesystem ?: new Filesystem;
 
 
