@@ -6,6 +6,7 @@ use Composer\Config;
 use Composer\Package\PackageInterface;
 use Composer\Script\Event;
 use Symfony\Component\Filesystem\Filesystem;
+use Alchemy\Zippy as Zippy;
 
 
 class ScriptHandler
@@ -64,10 +65,18 @@ class ScriptHandler
 
         foreach ($archives as $OutputZipName => $RelativeFolderToBeZipped) {
 
-            $source = realpath($RelativeFolderToBeZipped);
-            $fileName = $OutputZipName . '.zip';
-            $destination = realpath($outputFolder['dir']) . DIRECTORY_SEPARATOR . $fileName;
-            self::zip_files($event, $source, $destination);
+         //   $source = realpath($RelativeFolderToBeZipped);
+        //  $fileName = $OutputZipName . '.zip';
+         //   $destination = realpath($outputFolder['dir']) . DIRECTORY_SEPARATOR . $fileName;
+         //   self::zip_files($event, $source, $destination);
+
+
+         //   $zippy = Zippy::load();
+
+
+         print_r(get_declared_classes());
+
+
         }
     }
 }

@@ -8,8 +8,5 @@
     ],
     "autoload": {
         "psr-4": {"Supsign\\ComposerZip\\": "src/"}
-    },
-    "require": {
-        "alchemy/zippy": "^0.4.9"
     }
 }
