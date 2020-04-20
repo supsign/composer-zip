@@ -12,7 +12,20 @@ use Alchemy\Zippy\Zippy;
 class ScriptHandler
 {
 
-    public static function rrmdir($dir)
+    private static function run_npm_scripts($event, $dir)
+    {
+        if (!file_exists($dir . DIRECTORY_SEPARATOR . 'package.json')) {
+            $event->getIO()->write(sprintf('<info>Folder "%s" does not include "package.json"<info>', $dir));
+            return;
+        }
+        $result = exec('cd ' . $dir . ' && npm run composer-build --if-present');
+        var_dump($result);
+        return;
+    }
+
+
+
+    private static function rrmdir($dir)
     {
         if (is_dir($dir)) {
             $objects = scandir($dir);
@@ -31,7 +44,7 @@ class ScriptHandler
 
 
 
-    public static function custom_copy($src, $dst)
+    private static function custom_copy($src, $dst)
     {
 
         // open the source directory 
@@ -108,6 +121,7 @@ class ScriptHandler
                 $event->getIO()->write(sprintf('<info>Folder "%s" already exists. This is not good!<info>', $copy_destination_root_path));
             }
 
+            self::run_npm_scripts($event, $RelativeFolderToBeZipped);
             self::custom_copy($RelativeFolderToBeZipped, $copy_destination);
         }
 
