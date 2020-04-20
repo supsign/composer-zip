@@ -18,8 +18,8 @@ class ScriptHandler
             $event->getIO()->write(sprintf('<info>Folder "%s" does not include "package.json"<info>', $dir));
             return;
         }
-        $result = exec('cd ' . $dir . ' && npm run composer-build --if-present');
-        var_dump($result);
+        exec('cd ' . $dir . ' && npm i');
+        exec('cd ' . $dir . ' && npm run composer-build --if-present');
         return;
     }
 
