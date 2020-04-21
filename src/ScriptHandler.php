@@ -14,12 +14,15 @@ class ScriptHandler
 
     private static function run_npm_scripts($event, $dir)
     {
+        $event->getIO()->write(sprintf('<br><info>*** NPM-Install-Process Start ***</info>'));
         if (!file_exists($dir . DIRECTORY_SEPARATOR . 'package.json')) {
             $event->getIO()->write(sprintf('<info>Folder "%s" does not include "package.json"<info>', $dir));
             return;
         }
         exec('cd ' . $dir . ' && npm i --loglevel=error');
         exec('cd ' . $dir . ' && npm run composer-build --if-present --loglevel=error');
+        $event->getIO()->write(sprintf('<info>*** NPM-Install-Process Finished***</info><br>'));
+
         return;
     }
 
