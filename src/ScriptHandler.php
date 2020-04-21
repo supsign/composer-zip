@@ -14,14 +14,17 @@ class ScriptHandler
 
     private static function run_npm_scripts($event, $dir)
     {
-        $event->getIO()->write(sprintf('<br><info>*** NPM-Install-Process Start ***</info>'));
+        $event->getIO()->write(sprintf('<info></info>'));
+        $event->getIO()->write(sprintf('<info>*** NPM-Install-Process Start ***</info>'));
         if (!file_exists($dir . DIRECTORY_SEPARATOR . 'package.json')) {
             $event->getIO()->write(sprintf('<info>Folder "%s" does not include "package.json"<info>', $dir));
             return;
         }
         exec('cd ' . $dir . ' && npm i --loglevel=error');
         exec('cd ' . $dir . ' && npm run composer-build --if-present --loglevel=error');
-        $event->getIO()->write(sprintf('<info>*** NPM-Install-Process Finished***</info><br>'));
+        $event->getIO()->write(sprintf('<info>*** NPM-Install-Process Finished***</info>'));
+        $event->getIO()->write(sprintf('<info></info>'));
+
 
         return;
     }
@@ -91,12 +94,19 @@ class ScriptHandler
 
         // Whole Building Process (just copy it to get rid of symbolic Links Problem)
 
+        $event->getIO()->write(sprintf('<info></info>'));
+        $event->getIO()->write(sprintf('<info>*** Copy-Process Start ***</info>'));
+
         if (!file_exists($outputFolder['build'])) {
             mkdir($outputFolder['build'], 0777, true);
             $event->getIO()->write(sprintf('<info>Created Folder "%s"<info>', $outputFolder['build']));
         } else {
             $event->getIO()->write(sprintf('<info>Folder "%s" already exists. This is not good!<info>', $outputFolder['build']));
         }
+
+        $event->getIO()->write(sprintf('<info>*** Copy-Process Finished ***</info>'));
+        $event->getIO()->write(sprintf('<info></info>'));
+
 
 
         $file = $outputFolder['build'] . '/del.txt';
@@ -106,9 +116,6 @@ class ScriptHandler
             file_put_contents($file, $contents);     // Save our content to the file.
         }
 
-
-
-        $copy_destination = 'Buildtmp/HABEBI/Events';
 
         foreach ($archives as $OutputZipName => $RelativeFolderToBeZipped) {
 
