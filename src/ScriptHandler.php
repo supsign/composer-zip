@@ -15,14 +15,14 @@ class ScriptHandler
     private static function run_npm_scripts($event, $dir)
     {
         $event->getIO()->write(sprintf('<info></info>'));
-        $event->getIO()->write(sprintf('<info>*** NPM-Install-Process Start ***</info>'));
+        $event->getIO()->write(sprintf('<info>*** NPM-Install-Process Start for Folder "%s"***</info>', $dir));
         if (!file_exists($dir . DIRECTORY_SEPARATOR . 'package.json')) {
             $event->getIO()->write(sprintf('<info>Folder "%s" does not include "package.json"<info>', $dir));
             return;
         }
         exec('cd ' . $dir . ' && npm i --loglevel=error');
         exec('cd ' . $dir . ' && npm run composer-build --if-present --loglevel=error');
-        $event->getIO()->write(sprintf('<info>*** NPM-Install-Process Finished***</info>'));
+        $event->getIO()->write(sprintf('<info>*** NPM-Install-Process Finished for Folder "%s"***</info>', $dir));
         $event->getIO()->write(sprintf('<info></info>'));
 
 
@@ -31,28 +31,29 @@ class ScriptHandler
 
 
 
-    private static function rrmdir($dir)
+    private static function rrmdir($event, $dir)
     {
         if (is_dir($dir)) {
             $objects = scandir($dir);
             foreach ($objects as $object) {
                 if ($object != "." && $object != "..") {
                     if (is_dir($dir . DIRECTORY_SEPARATOR . $object) && !is_link($dir . "/" . $object))
-                        self::rrmdir($dir . DIRECTORY_SEPARATOR . $object);
+                        self::rrmdir($event, $dir . DIRECTORY_SEPARATOR . $object);
                     else
                         unlink($dir . DIRECTORY_SEPARATOR . $object);
                 }
             }
             rmdir($dir);
+            $event->getIO()->write(sprintf('<info>-- Cleaned up and removed Folder "%s"</info>', $dir));
         }
     }
 
 
 
 
-    private static function custom_copy($src, $dst)
+    private static function custom_copy($event, $src, $dst)
     {
-
+        $event->getIO()->write(sprintf('<info>-- Copy Folder "%s" to "%s"</info>', $src, $dst));
         // open the source directory 
         $dir = opendir($src);
 
@@ -64,10 +65,9 @@ class ScriptHandler
 
             if (($file != '.') && ($file != '..')) {
                 if (is_dir($src . '/' . $file)) {
-
                     // Recursively calling custom copy function 
                     // for sub directory  
-                    self::custom_copy($src . '/' . $file, $dst . '/' . $file);
+                    self::custom_copy($event, $src . '/' . $file, $dst . '/' . $file);
                 } else {
                     copy($src . '/' . $file, $dst . '/' . $file);
                 }
@@ -99,13 +99,12 @@ class ScriptHandler
 
         if (!file_exists($outputFolder['build'])) {
             mkdir($outputFolder['build'], 0777, true);
-            $event->getIO()->write(sprintf('<info>Created Folder "%s"<info>', $outputFolder['build']));
+            $event->getIO()->write(sprintf('<info>-- Created Folder "%s"<info>', $outputFolder['build']));
         } else {
-            $event->getIO()->write(sprintf('<info>Folder "%s" already exists. This is not good!<info>', $outputFolder['build']));
+            $event->getIO()->write(sprintf('<info>! Folder "%s" already exists. This is not good!<info>', $outputFolder['build']));
         }
 
-        $event->getIO()->write(sprintf('<info>*** Copy-Process Finished ***</info>'));
-        $event->getIO()->write(sprintf('<info></info>'));
+
 
 
 
@@ -126,26 +125,30 @@ class ScriptHandler
 
             if (!file_exists($copy_destination_root_path)) {
                 mkdir($copy_destination_root_path, 0777, true);
-                $event->getIO()->write(sprintf('<info>Created Folder "%s"<info>', $copy_destination_root_path));
+                $event->getIO()->write(sprintf('<info>-- Created Folder "%s"<info>', $copy_destination_root_path));
             } else {
-                $event->getIO()->write(sprintf('<info>Folder "%s" already exists. This is not good!<info>', $copy_destination_root_path));
+                $event->getIO()->write(sprintf('<info>! Folder "%s" already exists. This is not good!<info>', $copy_destination_root_path));
             }
 
             self::run_npm_scripts($event, $RelativeFolderToBeZipped);
-            self::custom_copy($RelativeFolderToBeZipped, $copy_destination);
+            self::custom_copy($event, $RelativeFolderToBeZipped, $copy_destination);
         }
 
+        $event->getIO()->write(sprintf('<info>*** Copy-Process Finished ***</info>'));
+        $event->getIO()->write(sprintf('<info></info>'));
+        $event->getIO()->write(sprintf('<info></info>'));
+        $event->getIO()->write(sprintf('<info>*** Zipping-Process Start ***</info>'));
 
 
         //  Create Output Folder if not exist
         $createOutputFolderRealPath = realpath($outputFolder['archives']);
 
         if ($createOutputFolderRealPath !== false and is_dir($createOutputFolderRealPath)) {
-            $event->getIO()->write(sprintf('<info>Folder "%s" already exists. This is totaly fine!<info>', $outputFolder['archives']));
+            $event->getIO()->write(sprintf('<info>-- Folder "%s" already exists. This is totaly fine!<info>', $outputFolder['archives']));
         } else {
             $createOutputFolderCmd = "mkdir " . $outputFolder['archives'];
             exec($createOutputFolderCmd);
-            $event->getIO()->write(sprintf('<info>Folder "%s" was created.<info>', $outputFolder['archives']));
+            $event->getIO()->write(sprintf('<info>-- Folder "%s" was created.<info>', $outputFolder['archives']));
         }
 
 
@@ -180,9 +183,10 @@ class ScriptHandler
 
             $archive->addMembers($filesToZip, true);
             $archive->removeMembers('del.txt');
-            $event->getIO()->write(sprintf('<info>Created "%s"</info>', $outputFolder['archives'] . '/' . $fileName));
+            $event->getIO()->write(sprintf('<info>-- Created "%s"</info>', $outputFolder['archives'] . '/' . $fileName));
         }
-        self::rrmdir($outputFolder['build']);
-        $event->getIO()->write(sprintf('<info>Cleaned up and removed Folder "%s"</info>', $outputFolder['archives']));
+        self::rrmdir($event, $outputFolder['build']);
+        $event->getIO()->write(sprintf('<info>*** Zipping-Process Finished ***</info>'));
+        $event->getIO()->write(sprintf('<info></info>'));
     }
 }
