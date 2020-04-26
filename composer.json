@@ -4,9 +4,19 @@
     "keywords": ["composer", "script", "symlink"],
     "license": "MIT",
     "authors": [
-        {"name": "Fabrizio Cocco", "email": "fabrizio.cocco@supsign.ch"}
-    ],
-    "autoload": {
-        "psr-4": {"Supsign\\ComposerZip\\": "src/"}
+    {
+        "name": "Fabrizio Cocco",
+        "email": "fabrizio.cocco@supsign.ch"
+    }],
+    "require":
+    {
+        "alchemy/zippy": "^0.4.9"
+    },
+    "autoload":
+    {
+        "psr-4":
+        {
+            "Supsign\\ComposerZip\\": "src/"
+        }
     }
 }
