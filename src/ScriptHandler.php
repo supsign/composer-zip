@@ -62,7 +62,10 @@ class ScriptHandler
 
         // Loop through the files in source directory 
         while ($file = readdir($dir)) {
-
+            if ($file == 'node_modules') {
+                var_dump($file, $src, $dst);
+                continue;
+            }
             if (($file != '.') && ($file != '..')) {
                 if (is_dir($src . '/' . $file)) {
                     // Recursively calling custom copy function 
