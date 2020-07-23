@@ -5,6 +5,7 @@ namespace Supsign\ComposerZip;
 use Composer\Config;
 use Composer\Package\PackageInterface;
 use Alchemy\Zippy\Zippy;
+use Symfony\Component\Filesystem\Exception\IOException;
 
 
 
@@ -58,12 +59,11 @@ class ScriptHandler
         $dir = opendir($src);
 
         // Make the destination directory if not exist 
-        @mkdir($dst);
+@mkdir($dst);
 
         // Loop through the files in source directory 
         while ($file = readdir($dir)) {
             if ($file == 'node_modules') {
-                var_dump($file, $src, $dst);
                 continue;
             }
             if (($file != '.') && ($file != '..')) {
@@ -110,7 +110,6 @@ class ScriptHandler
 
 
 
-
         $file = $outputFolder['build'] . '/del.txt';
 
         if (!is_file($file)) {
@@ -142,7 +141,6 @@ class ScriptHandler
         $event->getIO()->write(sprintf('<info></info>'));
         $event->getIO()->write(sprintf('<info>*** Zipping-Process Start ***</info>'));
 
-
         //  Create Output Folder if not exist
         $createOutputFolderRealPath = realpath($outputFolder['archives']);
 
@@ -172,6 +170,7 @@ class ScriptHandler
             foreach ($filesToZip as &$value) {
                 $value = $copy_destination . '/' . $value;
             }
+
             unset($value);
 
 
@@ -184,10 +183,23 @@ class ScriptHandler
 
 
 
+            try {
             $archive->addMembers($filesToZip, true);
+            }
+            catch(IOException $e)
+            {
+                $event->getIO()->write(sprintf('<info></info>'));
+                $event->getIO()->write(sprintf('<info>!!! Achtung: Error bei addMember von Zippy !!!</info>'));
+                $event->getIO()->write(sprintf('<info></info>'));
+
+            }
+
+
             $archive->removeMembers('del.txt');
+
             $event->getIO()->write(sprintf('<info>-- Created "%s"</info>', $outputFolder['archives'] . '/' . $fileName));
         }
+
         self::rrmdir($event, $outputFolder['build']);
         $event->getIO()->write(sprintf('<info>*** Zipping-Process Finished ***</info>'));
         $event->getIO()->write(sprintf('<info></info>'));
