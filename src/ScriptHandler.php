@@ -162,8 +162,7 @@ class ScriptHandler
             $zippy = Zippy::load();
 
 
-
-            $subfolder = str_replace('/', '', strrchr($copy_destination, '/'));
+            $copy_destination = $outputFolder['build'] . strstr($RelativeFolderToBeZipped, '/');
 
             $filesToZip = $files = array_diff(scandir($copy_destination), array('.', '..'));
 
